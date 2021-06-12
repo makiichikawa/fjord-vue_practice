@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+	<head>
+		<meta charset="UTF-8">
+		<title>todo list</title>
+		<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+	</head>
+	<body>
+    <div id = 'app'>
+      <h1>ToDo List</h1>
+      <div v-for='(todo, index) in todos'>
+        <p>
+          <span class='todo'>{{todo}}</span>
+          <button v-on:click='removeTodo(index)'>削除</button>
+        </p>
+      </div>
+      <p>
+        todo <input v-model='newTodo'>
+        <button v-on:click='addTodo'>追加</button>
+      </p>
+    </div>
+    <script>
+      let app = new Vue({
+        el: '#app',
+        data: {
+          todos: [],
+          newTodo: null
+        },
+        mounted() {
+          if (localStorage.getItem('todos')) {
+            this.cats = JSON.parse(localStrage.getItem(todos))
+          }
+        },
+        methods: {
+          removeTodo(index) {
+            this.todos.splice(index, 1)
+            this.saveTodos()
+          },
+          addTodo() {
+            if (!this.newTodo) {
+              return
+            }
+            this.todos.push(this.newTodo)
+            this.newTodo = ''
+            this.saveTodos()
+          },
+          saveTodos() {
+            const parsed = JSON.stringify(this.todos)
+            localStorage.setItem('todos', parsed)
+          }
+        }
+      })
+    </script>
+	</body>
+</html>
