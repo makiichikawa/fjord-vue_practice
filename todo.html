@@ -8,14 +8,31 @@
 	<body>
     <div id = 'app'>
       <h1>ToDo List</h1>
-      <div v-for='(todo, index) in todos'>
-        <p>
-          <span class='todo'>{{todo}}</span>
-          <button v-on:click='removeTodo(index)'>削除</button>
-        </p>
-      </div>
+      <table>
+        <tr>
+          <th>todo</th>
+          <th></th>
+          <th></th>
+        </tr>
+        <tr v-for='(todo, index) in todos'>
+          <span class='todo'>
+            <td v-if='!todo.editFlag'>{{todo.task}}</td>
+            <td v-else><input v-model='todo.task' v-on:blur='saveEdit(index)'></td>
+            <td>
+              <button v-on:click='isEditFlag(index, true)'>
+                編集
+              </button>
+            </td>
+            <td>
+              <button v-on:click='removeTodo(index)'>
+                削除
+              </button>
+            </td>
+          </span>
+        </tr> 
+      </table>
       <p>
-        todo <input v-model='newTodo'>
+        <input v-model='newTodo'>
         <button v-on:click='addTodo'>追加</button>
       </p>
     </div>
@@ -28,7 +45,7 @@
         },
         mounted() {
           if (localStorage.getItem('todos')) {
-            this.cats = JSON.parse(localStrage.getItem(todos))
+            this.todos = JSON.parse(localStorage.getItem(todos))
           }
         },
         methods: {
@@ -40,13 +57,21 @@
             if (!this.newTodo) {
               return
             }
-            this.todos.push(this.newTodo)
+            const todo = {task: this.newTodo, editFlag: false}
+            this.todos.push(todo)
             this.newTodo = ''
             this.saveTodos()
+          },
+          saveEdit(index) {
+            this.isEditFlag(index, false)
+            this.saveTodos
           },
           saveTodos() {
             const parsed = JSON.stringify(this.todos)
             localStorage.setItem('todos', parsed)
+          },
+          isEditFlag(index, bool) {
+            this.todos[index].editFlag = bool
           }
         }
       })
