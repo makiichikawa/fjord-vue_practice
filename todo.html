@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title>todo list</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/uikit@3.6.22/dist/css/uikit.min.css" />
+    <!-- UIkit JS -->
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.6.22/dist/js/uikit.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/uikit@3.6.22/dist/js/uikit-icons.min.js"></script>
+  </head>
+  <body>
+    <div id = 'app'>
+      <h1>TODO List</h1>
+      <div class="uk-flex uk-flex-column uk-grid-large" uk-grid>
+        <div>
+          <table class="uk-table uk-table-striped">
+            <tr>
+              <th class="uk-width-expand">todo</th>
+              <th class="uk-width-small"></th>
+              <th class="uk-width-small"></th>
+            </tr>
+            <tr v-for='(todo, index) in todos'>
+              <span class='todo'>
+                <td v-if='!todo.editFlag'>{{todo.task}}</td>
+                <td v-else><input v-model='todo.task' v-on:blur='saveEdit(index)'></td>
+                <td class="uk-text-nowrap">
+                  <button class="uk-button uk-button-secondary uk-button-small" v-on:click='isEditFlag(index, true)'>
+                    編集
+                  </button>
+                </td>
+                <td class="uk-text-nowrap">
+                  <button class="uk-button uk-button-danger uk-button-small" v-on:click='removeTodo(index)'>
+                    削除
+                  </button>
+                </td>
+              </span>
+            </tr>
+          </table>
+        </div>
+        <div>
+          <p>
+            <input v-model='newTodo'>
+            <button class="uk-button uk-button-primary uk-button-small" v-on:click='addTodo'>追加</button>
+          </p>
+        </div>
+      </div>
+    </div>
+    <script>
+      let app = new Vue({
+        el: '#app',
+        data: {
+          todos: [],
+          newTodo: null
+        },
+        mounted() {
+          if (localStorage.getItem('todos')) {
+            this.todos = JSON.parse(localStorage.getItem(todos))
+          }
+        },
+        methods: {
+          removeTodo(index) {
+            this.todos.splice(index, 1)
+            this.saveTodos()
+          },
+          addTodo() {
+            if (!this.newTodo) {
+              return
+            }
+            const todo = {task: this.newTodo, editFlag: false}
+            this.todos.push(todo)
+            this.newTodo = ''
+            this.saveTodos()
+          },
+          saveEdit(index) {
+            this.isEditFlag(index, false)
+            this.saveTodos
+          },
+          saveTodos() {
+            const parsed = JSON.stringify(this.todos)
+            localStorage.setItem('todos', parsed)
+          },
+          isEditFlag(index, bool) {
+            this.todos[index].editFlag = bool
+          }
+        }
+      })
+    </script>
+  </body>
+</html>
